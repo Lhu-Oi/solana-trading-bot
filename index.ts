@@ -339,73 +339,75 @@ async function processCoinSwapActivity(signature: string, bot: Bot, poolCache: P
         }
 
         const exists = await poolCache.get(poolState.baseMint.toString());
-        if (!exists) { {
-          poolCache.save(poolState.baseMint.toString(), poolState);
-          await bot.buy(new PublicKey(ammId), poolState);
+        if (!exists) {
+          {
+            poolCache.save(poolState.baseMint.toString(), poolState);
+            await bot.buy(new PublicKey(ammId), poolState);
+          }
         }
       }
     }
   }
-}
 
-async function getCoinSwapInfo(signature: string) {
-  const coin_swap_info = await fetchTransaction(signature);
-  console.log('区块：', coin_swap_info.data.block_id);
-  if (coin_swap_info.success && coin_swap_info.data) {
-    if (coin_swap_info.data.tokens_involved.length > 0) {
-      let parsed_instructions = coin_swap_info.data.parsed_instructions || []
-      let inner_instructions = coin_swap_info.data.inner_instructions || []
-      let item_activity: any = {}
-      let item_parsed_instructions: any = {}
+  async function getCoinSwapInfo(signature: string) {
+    const coin_swap_info = await fetchTransaction(signature);
+    console.log('区块：', coin_swap_info.data.block_id);
+    if (coin_swap_info.success && coin_swap_info.data) {
+      if (coin_swap_info.data.tokens_involved.length > 0) {
+        let parsed_instructions = coin_swap_info.data.parsed_instructions || []
+        let inner_instructions = coin_swap_info.data.inner_instructions || []
+        let item_activity: any = {}
+        let item_parsed_instructions: any = {}
 
 
-      let activityTypes = ["token_swap", "defi_token_swap"];
-      parsed_instructions.filter((item: any) => {
+        let activityTypes = ["token_swap", "defi_token_swap"];
+        parsed_instructions.filter((item: any) => {
 
-        let item_filter_inner_instructions = item.inner_instructions
-        if (item_filter_inner_instructions && item_filter_inner_instructions.length !== 0) {
-          item_filter_inner_instructions.filter((item_filter: any) => {
-            return item_filter.activities.find((activity: any) => {
+          let item_filter_inner_instructions = item.inner_instructions
+          if (item_filter_inner_instructions && item_filter_inner_instructions.length !== 0) {
+            item_filter_inner_instructions.filter((item_filter: any) => {
+              return item_filter.activities.find((activity: any) => {
+                if (activity.name === "RaydiumTokenSwap" && activityTypes.includes(activity.activity_type)) {
+                  item_activity = activity
+                  item_parsed_instructions = item_filter
+                  return true;
+                }
+              });
+            })
+          }
+
+          if (item.activities && item.activities.length > 0) {
+            return item.activities.find((activity: any) => {
               if (activity.name === "RaydiumTokenSwap" && activityTypes.includes(activity.activity_type)) {
                 item_activity = activity
-                item_parsed_instructions = item_filter
+                item_parsed_instructions = item
                 return true;
               }
             });
-          })
-        }
-
-        if (item.activities && item.activities.length > 0) {
-          return item.activities.find((activity: any) => {
-            if (activity.name === "RaydiumTokenSwap" && activityTypes.includes(activity.activity_type)) {
-              item_activity = activity
-              item_parsed_instructions = item
-              return true;
-            }
-          });
-        }
-        return false;
-      });
+          }
+          return false;
+        });
 
 
-      inner_instructions.filter((item: any) => {
-        if (item.activities && item.activities.length > 0) {
-          return item.activities.find((activity: any) => {
-            if (activity.name === "RaydiumTokenSwap" && activityTypes.includes(activity.activity_type)) {
-              item_activity = activity
-              item_parsed_instructions = item
-              return true;
-            }
-            return false;
-          });
-        }
-        return false;
-      });
+        inner_instructions.filter((item: any) => {
+          if (item.activities && item.activities.length > 0) {
+            return item.activities.find((activity: any) => {
+              if (activity.name === "RaydiumTokenSwap" && activityTypes.includes(activity.activity_type)) {
+                item_activity = activity
+                item_parsed_instructions = item
+                return true;
+              }
+              return false;
+            });
+          }
+          return false;
+        });
 
-      return item_activity;
+        return item_activity;
+      }
     }
+    return null;
   }
-  return null;
 }
 
 runListener();
