@@ -236,7 +236,7 @@ const runListener = async () => {
   //     await bot.buy(updatedAccountInfo.accountId, poolState);
   //   }
   // });
-  wsCoin(bot);
+  wsCoin(bot, poolCache);
 
   listeners.on('wallet', async (updatedAccountInfo: KeyedAccountInfo) => {
     const accountData = AccountLayout.decode(updatedAccountInfo.accountInfo.data);
@@ -251,7 +251,7 @@ const runListener = async () => {
   printDetails(wallet, quoteToken, bot);
 };
 
-async function wsCoin(bot: Bot): Promise<void> {
+async function wsCoin(bot: Bot, poolCache: PoolCache): Promise<void> {
   let count = 0;
   const uri = "wss://api.mainnet-beta.solana.com";
   const ws = new WebSocket(uri);
@@ -293,7 +293,7 @@ async function wsCoin(bot: Bot): Promise<void> {
       const formattedTime = `${currentDate.getHours().toString().padStart(2, '0')}:${currentDate.getMinutes().toString().padStart(2, '0')}:${currentDate.getSeconds().toString().padStart(2, '0')}`;
       console.log(`============================================================================================${count}-New update received on ${formattedDate} ${formattedTime} ============================================================================================`);
       console.log(`Transaction signature: https://solscan.io/tx/${signature}`);
-      await processCoinSwapActivity(signature, bot)
+      await processCoinSwapActivity(signature, bot, poolCache)
       console.log(`============================================================================================${count}-New update received on ${formattedDate} ${formattedTime} ============================================================================================`);
 
     } else {
@@ -314,7 +314,7 @@ async function wsCoin(bot: Bot): Promise<void> {
   });
 }
 
-async function processCoinSwapActivity(signature: string, bot: Bot) {
+async function processCoinSwapActivity(signature: string, bot: Bot, poolCache: PoolCache) {
   let item_activity = await getCoinSwapInfo(signature);
 
   if (item_activity && Object.keys(item_activity).length !== 0) {
@@ -338,7 +338,11 @@ async function processCoinSwapActivity(signature: string, bot: Bot) {
           poolState.baseVault = new PublicKey(quoteVault);
         }
 
-        await bot.buy(new PublicKey(ammId), poolState);
+        const exists = await poolCache.get(poolState.baseMint.toString());
+        if (!exists) { {
+          poolCache.save(poolState.baseMint.toString(), poolState);
+          await bot.buy(new PublicKey(ammId), poolState);
+        }
       }
     }
   }
