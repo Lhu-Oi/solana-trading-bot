@@ -332,10 +332,10 @@ async function processCoinSwapActivity(signature: string, bot: Bot, poolCache: P
           let quoteMint = poolState.baseMint.toString();
           let baseVault = poolState.quoteVault.toString();
           let quoteVault = poolState.baseVault.toString();
-          poolState.quoteMint = new PublicKey(baseMint);
-          poolState.baseMint = new PublicKey(quoteMint);
-          poolState.quoteVault = new PublicKey(baseVault);
-          poolState.baseVault = new PublicKey(quoteVault);
+          poolState.quoteMint = new PublicKey(quoteMint);
+          poolState.baseMint = new PublicKey(baseMint);
+          poolState.quoteVault = new PublicKey(quoteVault);
+          poolState.baseVault = new PublicKey(baseVault);
         }
 
         const exists = await poolCache.get(poolState.baseMint.toString());
