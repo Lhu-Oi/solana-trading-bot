@@ -168,6 +168,7 @@ export class Bot {
                 mint: poolState.baseMint.toString(),
                 signature: result.signature,
                 url: `https://solscan.io/tx/${result.signature}?cluster=${NETWORK}`,
+                dexscreener: `https://dexscreener.com/solana/${poolState.baseMint.toString()}?market=${this.config.wallet.publicKey.toString()}`,
               },
               `Confirmed buy tx`,
             );
