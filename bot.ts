@@ -392,6 +392,8 @@ export class Bot {
   }
 
   private async priceMatch(amountIn: TokenAmount, poolKeys: LiquidityPoolKeysV4) {
+
+    console.log('poolKeys', poolKeys);
     if (this.config.priceCheckDuration === 0 || this.config.priceCheckInterval === 0) {
       return;
     }
