@@ -19,7 +19,7 @@ export async function fetchTransaction(tx: string) {
         'Sec-Fetch-Dest': 'empty',
         'Sec-Fetch-Mode': 'cors',
         'Sec-Fetch-Site': 'same-site',
-        'Sol-Aut': 'ClfB9dls0fKA0AzZlEQP5vHzF6N7N4Ll86XVbzlT',
+        'Sol-Aut': 'Q3BQpIYKJf6-E9Y2Dbsxe5oRB9dls0fKMsBhslX1',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
       }
     });
