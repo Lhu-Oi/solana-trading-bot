@@ -221,10 +221,10 @@ const runListener = async () => {
     cacheNewMarkets: CACHE_NEW_MARKETS,
   });
 
-  // listeners.on('market', (updatedAccountInfo: KeyedAccountInfo) => {
-  //   const marketState = MARKET_STATE_LAYOUT_V3.decode(updatedAccountInfo.accountInfo.data);
-  //   marketCache.save(updatedAccountInfo.accountId.toString(), marketState);
-  // });
+  listeners.on('market', (updatedAccountInfo: KeyedAccountInfo) => {
+    const marketState = MARKET_STATE_LAYOUT_V3.decode(updatedAccountInfo.accountInfo.data);
+    marketCache.save(updatedAccountInfo.accountId.toString(), marketState);
+  });
 
   // listeners.on('pool', async (updatedAccountInfo: KeyedAccountInfo) => {
   //   const poolState = LIQUIDITY_STATE_LAYOUT_V4.decode(updatedAccountInfo.accountInfo.data);
