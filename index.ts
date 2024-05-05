@@ -330,13 +330,9 @@ async function processCoinSwapActivity(signature: string, bot: Bot, poolCache: P
         if (poolState.baseMint.toString() === SOL_ADDRESS || poolState.baseMint.toString() === USDC_ADDRESS) {
           let baseMint = poolState.quoteMint.toString();
           let quoteMint = poolState.baseMint.toString();
-          let baseVault = poolState.quoteVault.toString();
-          let quoteVault = poolState.baseVault.toString();
-          console.log(`baseMint: ${baseMint}, quoteMint: ${quoteMint}, baseVault: ${baseVault}, quoteVault: ${quoteVault}`);
+          console.log(`baseMint: ${baseMint}, quoteMint: ${quoteMint}`);
           poolState.quoteMint = new PublicKey(quoteMint);
           poolState.baseMint = new PublicKey(baseMint);
-          poolState.quoteVault = new PublicKey(quoteVault);
-          poolState.baseVault = new PublicKey(baseVault);
         }
 
         const exists = await poolCache.get(poolState.baseMint.toString());
