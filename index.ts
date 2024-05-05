@@ -332,6 +332,7 @@ async function processCoinSwapActivity(signature: string, bot: Bot, poolCache: P
           let quoteMint = poolState.baseMint.toString();
           let baseVault = poolState.quoteVault.toString();
           let quoteVault = poolState.baseVault.toString();
+          console.log(`baseMint: ${baseMint}, quoteMint: ${quoteMint}, baseVault: ${baseVault}, quoteVault: ${quoteVault}`);
           poolState.quoteMint = new PublicKey(quoteMint);
           poolState.baseMint = new PublicKey(baseMint);
           poolState.quoteVault = new PublicKey(quoteVault);
